@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chats Multipantalla</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #121212; color: white; }
+        .controls { margin-bottom: 10px; }
+        .grid { display: flex; flex-direction: column; gap: 10px; }
+        .chat-box { position: relative; border: 1px solid #333; padding: 10px; background-color: #1e1e1e; }
+        .chat-box iframe { width: 100%; height: 400px; background: black; }
+        .close-btn { position: absolute; top: 5px; right: 5px; cursor: pointer; color: red; }
+        input { background-color: #333; color: white; border: 1px solid #555; padding: 5px; }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <label for="columns">Número de columnas:</label>
+        <input type="number" id="columns" min="1" max="8" value="3">
+        <button onclick="updateColumns()">Aplicar</button>
+    </div>
+    <div class="grid" id="chatContainer"></div>
+    
+    <script>
+        function updateColumns() {
+            let numColumns = document.getElementById("columns").value;
+            let container = document.getElementById("chatContainer");
+            container.innerHTML = "";
+            for (let i = 0; i < numColumns; i++) {
+                addChatBox(i);
+            }
+        }
+        
+        function addChatBox(index) {
+            let container = document.getElementById("chatContainer");
+            let chatBox = document.createElement("div");
+            chatBox.className = "chat-box";
+            chatBox.style.flex = "1";
+            
+            let input = document.createElement("input");
+            input.type = "text";
+            input.placeholder = "URL del chat";
+            input.onchange = function() { loadChat(chatBox, input.value); };
+            
+            let closeBtn = document.createElement("span");
+            closeBtn.className = "close-btn";
+            closeBtn.innerHTML = "?";
+            closeBtn.onclick = function() { chatBox.remove(); redistribuir(); };
+            
+            chatBox.appendChild(input);
+            chatBox.appendChild(closeBtn);
+            container.appendChild(chatBox);
+        }
+        
+        function loadChat(chatBox, url) {
+            let iframe = document.createElement("iframe");
+            iframe.src = url;
+            iframe.allow = "allow-same-origin allow-scripts";
+            chatBox.appendChild(iframe);
+        }
+        
+        function redistribuir() {
+            let chatBoxes = document.querySelectorAll(".chat-box");
+            chatBoxes.forEach(chat => {
+                chat.style.flex = "1";
+            });
+        }
+    </script>
+</body>
+</html>
